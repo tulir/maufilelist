@@ -14,9 +14,9 @@
 		"$3,[[Unknown]]",
 		"download-button"
 	],
+	"enable-back-button": false,
 	"directory-list": {
 		"enabled": true,
-		"enable-..": false,
 		"parsing": [
 			".+-([0-9]\\.[0-9]\\.[0-9])",
 			".+"
