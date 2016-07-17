@@ -36,7 +36,7 @@ type DirConfig struct {
 
 // FieldInstructions is a file or directory list config
 type FieldInstructions struct {
-	Enable       bool             `json:"enable"`
+	Enabled      bool             `json:"enabled"`
 	ParsingRaw   []string         `json:"parsing"`
 	Parsing      []*regexp.Regexp `json:"-"`
 	FieldDataRaw []string         `json:"field-data"`
@@ -52,6 +52,7 @@ func (instructions FieldInstructions) GetData(file os.FileInfo) []string {
 		}
 		args = parser.FindStringSubmatch(file.Name())
 	}
+
 	var values = make([]string, len(instructions.FieldData))
 	for i, fieldDataList := range instructions.FieldData {
 		values[i] = instructions.getFieldData(file, args, fieldDataList)
@@ -146,17 +147,18 @@ func (cfg *DirConfig) parseFieldData(definitions []string) ([][]FieldData, error
 		i := 0
 		dataList := make([]FieldData, 1)
 	DefParser:
-		for i < len(def) {
+		for i < len(def)-1 {
 			var fd FieldData
 			var err error
 			if def[i] == ' ' {
+				i++
 				continue DefParser
 			} else if def[i] == '$' {
-				fd, err = parseArg(i, def)
+				fd, i, err = parseArg(i, def)
 			} else if def[i] == '`' {
-				fd, err = parseLiteral(i, def)
+				fd, i, err = parseLiteral(i, def)
 			} else {
-				fd, err = parseParam(i, def)
+				fd, i, err = parseParam(i, def)
 			}
 			if err != nil {
 				return data, fmt.Errorf("field data entry #%d failed: %s", defN, err)
@@ -168,37 +170,45 @@ func (cfg *DirConfig) parseFieldData(definitions []string) ([][]FieldData, error
 	return data, nil
 }
 
-func parseArg(i int, def string) (FieldData, error) {
+func parseArg(i int, def string) (FieldData, int, error) {
 	argEnd := strings.IndexAny(def[i+1:], "`$ ")
 	if argEnd == -1 {
 		argEnd = len(def)
 	}
 
+	argEnd += len(def[:i])
+
 	argN, err := strconv.Atoi(def[i+1 : argEnd])
 	if err != nil {
-		return FieldData{}, fmt.Errorf("Invalid argument # after column %d", i)
+		return FieldData{}, argEnd + 1, fmt.Errorf("Invalid argument # after column %d", i)
 	}
 
-	return FieldData{Type: TypeArg, Data: argN}, nil
+	return FieldData{Type: TypeArg, Data: argN}, argEnd + 1, nil
 }
 
-func parseLiteral(i int, def string) (FieldData, error) {
+func parseLiteral(i int, def string) (FieldData, int, error) {
 	for {
 		literalEnd := strings.IndexRune(def[i+1:], '`')
 		if literalEnd == -1 {
-			return FieldData{}, fmt.Errorf("Unterminated literal after start at column %d", i)
-		} else if def[literalEnd-1] == '\\' {
+			return FieldData{}, len(def), fmt.Errorf("Unterminated literal after start at column %d", i)
+		}
+
+		literalEnd += len(def[:i])
+		if def[literalEnd-1] == '\\' {
 			continue
 		}
-		return FieldData{Type: TypeLiteral, Data: def[i+1 : literalEnd]}, nil
+		return FieldData{Type: TypeLiteral, Data: def[i+1 : literalEnd+1]}, literalEnd + 1, nil
 	}
 }
 
-func parseParam(i int, def string) (FieldData, error) {
+func parseParam(i int, def string) (FieldData, int, error) {
 	argEnd := strings.IndexAny(def[i:], "`$ ")
 	if argEnd == -1 {
 		argEnd = len(def)
 	}
+
+	argEnd += len(def[:i])
+
 	param := def[i:argEnd]
 	var arg string
 	if strings.ContainsRune(param, ':') {
@@ -216,7 +226,7 @@ func parseParam(i int, def string) (FieldData, error) {
 			// TODO format in arg
 		}
 	default:
-		return FieldData{}, fmt.Errorf("Unknown data key %s", param)
+		return FieldData{}, argEnd + 1, fmt.Errorf("Unknown data key %s", param)
 	}
-	return fd, nil
+	return fd, argEnd + 1, nil
 }
