@@ -14,3 +14,56 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	flag "maunium.net/go/mauflag"
+	log "maunium.net/go/maulogger"
+	"net/http"
+)
+
+// Config is the main configuration
+type Config struct {
+	IP             string          `json:"ip"`
+	Port           int8            `json:"port"`
+	DefaultFormat  string          `json:"default-format"`
+	MainDomain     VDom            `json:"main-domain"`
+	VirtualDomains map[string]VDom `json:"virtual-domains"`
+}
+
+// VDom is a virtual domain
+type VDom struct {
+	Root     string            `json:"root"`
+	Subroots map[string]string `json:"subroots"`
+}
+
+var config Config
+
+var confPath = flag.Make().Default("/etc/mfl/config.json").ShortKey("c").LongKey("config").String()
+var logPath = flag.Make().Default("/var/log/mfl").ShortKey("l").LongKey("logs").String()
+
+func main() {
+	flag.Parse()
+
+	log.Init()
+	log.Fileformat = func(now string, i int) string { return fmt.Sprintf("%[3]s/%[1]s-%02[2]d.log", now, i, *logPath) }
+	log.Debugln("Logger initialized.")
+
+	log.Debugln("Loading config...")
+	data, err := ioutil.ReadFile(*confPath)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		panic(err)
+	}
+	log.Debugln("Config loaded!")
+
+	http.HandleFunc("/", handle)
+	log.Infof("Listening on %s:%d\n", config.IP, config.Port)
+	http.ListenAndServe(fmt.Sprintf("%s:%d", config.IP, config.Port), nil)
+}
