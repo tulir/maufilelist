@@ -43,6 +43,23 @@ type FieldInstructions struct {
 	FieldData    [][]FieldData    `json:"-"`
 }
 
+// FieldDataType is the type of a FieldData object
+type FieldDataType int
+
+// Allowed FieldDataTypes
+const (
+	TypeName       FieldDataType = iota
+	TypeLastChange FieldDataType = iota
+	TypeArg        FieldDataType = iota
+	TypeLiteral    FieldDataType = iota
+)
+
+// FieldData contains the type and data of a list entry definition field
+type FieldData struct {
+	Type FieldDataType
+	Data interface{}
+}
+
 // GetData gets the data for all the fields
 func (instructions FieldInstructions) GetData(file os.FileInfo) []string {
 	var args []string
@@ -83,23 +100,6 @@ func (instructions FieldInstructions) getFieldData(file os.FileInfo, args []stri
 		}
 	}
 	return buf.String()
-}
-
-// FieldDataType is the type of a FieldData object
-type FieldDataType int
-
-// Allowed FieldDataTypes
-const (
-	TypeName       FieldDataType = iota
-	TypeLastChange FieldDataType = iota
-	TypeArg        FieldDataType = iota
-	TypeLiteral    FieldDataType = iota
-)
-
-// FieldData contains the type and data of a list entry definition field
-type FieldData struct {
-	Type FieldDataType
-	Data interface{}
 }
 
 // Parse does all necessary parsing of raw data
