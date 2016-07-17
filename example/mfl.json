@@ -24,9 +24,9 @@
 		"field-data": [
 			"name",
 			"last-change",
-			"$1,[[N/A]]",
-			"[[Directory]]",
-			"download-button"
+			"$1,`N/A`",
+			"`Directory`",
+			"`<a type='button' class='btn btn-download' href='` file-name `'>Download</a>`"
 		]
 	},
 	"file-list": {
