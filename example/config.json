@@ -1,0 +1,21 @@
+{
+	"ip": "127.0.0.1",
+	"port": 29307,
+	"main-domain": {
+		"root": "/var/www/main",
+		"subroots": {
+			"/download": "/var/www/downloads"
+		}
+	},
+	"virtual-domains": {
+		"sub.example.com": {
+			"root": "/var/www/sub.example.com",
+			"subroots": {
+				"/download": "/var/www/downloads"
+			}
+		},
+		"dl.example.com": {
+			"root": "/var/www/downloads"
+		}
+	}
+}
