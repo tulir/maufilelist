@@ -166,7 +166,7 @@ func loadConfig(root, path string) (*DirConfig, int) {
 
 func findFile(root, path, fileName string) string {
 	var dir = filepath.Join(root, path)
-	path = filepath.Join(dir, ".mfl.gohtml")
+	path = filepath.Join(dir, fileName)
 	if _, err := os.Stat(path); err == nil {
 		return path
 	}
@@ -174,7 +174,7 @@ func findFile(root, path, fileName string) string {
 		if strings.IndexRune(dir, '/') < 0 {
 			return ""
 		}
-		dir = dir[:strings.LastIndex(dir, "/")]
+		dir = dir[:strings.LastIndex(dir[:len(dir)-1], "/")]
 		var path = filepath.Join(path, fileName)
 		if _, err := os.Stat(path); err == nil {
 			return path
