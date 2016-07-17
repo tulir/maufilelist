@@ -48,11 +48,11 @@ var debug = flag.Make().Default("false").ShortKey("d").LongKey("debug").Bool()
 func main() {
 	flag.Parse()
 
-	log.Init()
 	log.Fileformat = func(now string, i int) string { return fmt.Sprintf("%[3]s/%[1]s-%02[2]d.log", now, i, *logPath) }
 	if *debug {
 		log.PrintLevel = 0
 	}
+	log.Init()
 	log.Debugln("Logger initialized.")
 
 	log.Debugln("Loading config...")
