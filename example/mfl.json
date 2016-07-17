@@ -15,7 +15,7 @@
 			".+"
 		],
 		"field-data": [
-			"name",
+			"file-name",
 			"last-change",
 			"$1,`N/A`",
 			"`Directory`",
