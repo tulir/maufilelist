@@ -110,6 +110,11 @@ func listFiles(w http.ResponseWriter, r *http.Request, cfg *DirConfig, format *t
 			templCfg.Files[i] = cfg.FileList.GetData(file)
 		}
 	}
+
+	err := format.Execute(w, templCfg)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func loadFormat(root, path string) (*template.Template, int) {
@@ -121,12 +126,20 @@ func loadFormat(root, path string) (*template.Template, int) {
 
 	format, ok := cachedFormats[formatPath]
 	if !ok {
-		var err error
-		format, err = template.New(formatPath).ParseFiles(formatPath)
+		format = template.New(formatPath[len(root) : strings.LastIndex(formatPath, "/")+1])
+
+		data, err := ioutil.ReadFile(formatPath)
 		if err != nil {
-			log.Errorln("Failed to load template at", formatPath+":", err)
+			log.Errorln("Failed to read template at", formatPath+":", err)
 			return nil, http.StatusInternalServerError
 		}
+
+		_, err = format.Parse(string(data))
+		if err != nil {
+			log.Errorln("Failed to parse template at", formatPath+":", err)
+			return nil, http.StatusInternalServerError
+		}
+
 		cachedFormats[formatPath] = format
 	}
 	return format, http.StatusOK
