@@ -32,8 +32,8 @@
 		"field-data": [
 			"$1",
 			"last-change:format(%d.%m.%Y)",
-			"$2,[[1]]",
-			"$3,[[Unknown]]",
+			"$2,`1`",
+			"$3,`Unknown`",
 			"`<a type='button' class='btn btn-download' href='` file-name `'>Download</a>`"
 		]
 	}
