@@ -91,7 +91,7 @@ func listFiles(w http.ResponseWriter, r *http.Request, cfg *DirConfig, format *t
 		Files:      make([][]string, len(files)),
 	}
 
-	if cfg.DirectoryList.Enable {
+	if cfg.DirectoryList.Enabled {
 		for i, file := range files {
 			if strings.HasPrefix(file.Name(), ".") || !file.IsDir() {
 				continue
@@ -101,7 +101,7 @@ func listFiles(w http.ResponseWriter, r *http.Request, cfg *DirConfig, format *t
 		}
 	}
 
-	if cfg.FileList.Enable {
+	if cfg.FileList.Enabled {
 		for i, file := range files {
 			if strings.HasPrefix(file.Name(), ".") || file.IsDir() {
 				continue
