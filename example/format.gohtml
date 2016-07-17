@@ -31,9 +31,11 @@
         </thead>
         <tbody>
           {{ range $index, $val := .Files }}
-            {{ range $index, $data := $val.data }}
-              <td>{{ $data }}</td>
-            {{ end }}
+            <tr>
+              {{ range $index, $data := $val.data }}
+                <td>{{ $data }}</td>
+              {{ end }}
+            </tr>
           {{ end }}
         </tbody>
       </table>
