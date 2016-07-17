@@ -17,13 +17,13 @@ package main
 
 import (
 	"encoding/json"
-	"html/template"
 	"io/ioutil"
 	log "maunium.net/go/maulogger"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
 // TemplateData is the data given to templates
