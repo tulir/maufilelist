@@ -26,21 +26,11 @@ import (
 	"strings"
 )
 
-// DirConfig is the config of a single directory
-type DirConfig struct {
-	DirectoryName string     `json:"directory-name"`
-	FieldNames    []string   `json:"field-names"`
-	FieldData     []string   `json:"field-data"`
-	EnableBackBtn bool       `json:"enable-back-button"`
-	DirectoryList ObjectList `json:"directory-list"`
-	FileList      ObjectList `json:"file-list"`
-}
-
-// ObjectList is a file or directory list config
-type ObjectList struct {
-	Enable    bool     `json:"enable"`
-	Parsing   []string `json:"parsing"`
-	FieldData []string `json:"field-data"`
+// TemplateData is the data given to templates
+type TemplateData struct {
+	Directory  string
+	FieldNames []string
+	Files      [][]string
 }
 
 var cachedFormats = make(map[string]*template.Template)
@@ -68,23 +58,58 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	format, err := loadFormat(root, path)
-	if err != http.StatusOK {
-		w.WriteHeader(err)
+	var dir = filepath.Join(root, path)
+
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			w.WriteHeader(http.StatusNotFound)
+		} else if os.IsPermission(err) {
+			w.WriteHeader(http.StatusForbidden)
+		}
+	}
+
+	format, errCode := loadFormat(root, path)
+	if errCode != http.StatusOK {
+		w.WriteHeader(errCode)
 		return
 	}
 
-	cfg, err := loadConfig(root, path)
-	if err != http.StatusOK {
-		w.WriteHeader(err)
+	cfg, errCode := loadConfig(root, path)
+	if errCode != http.StatusOK {
+		w.WriteHeader(errCode)
 		return
 	}
 
-	listFiles(w, r, cfg, format, filepath.Join(root, path))
+	listFiles(w, r, cfg, format, dir, files)
 }
 
-func listFiles(w http.ResponseWriter, r *http.Request, cfg *DirConfig, format *template.Template, dir string) {
+func listFiles(w http.ResponseWriter, r *http.Request, cfg *DirConfig, format *template.Template, dir string, files []os.FileInfo) {
+	var templCfg = TemplateData{
+		Directory:  cfg.DirectoryName,
+		FieldNames: cfg.FieldNames,
+		Files:      make([][]string, len(files)),
+	}
 
+	if cfg.DirectoryList.Enable {
+		for i, file := range files {
+			if strings.HasPrefix(file.Name(), ".") || !file.IsDir() {
+				continue
+			}
+
+			templCfg.Files[i] = cfg.DirectoryList.GetData(file)
+		}
+	}
+
+	if cfg.FileList.Enable {
+		for i, file := range files {
+			if strings.HasPrefix(file.Name(), ".") || file.IsDir() {
+				continue
+			}
+
+			templCfg.Files[i] = cfg.FileList.GetData(file)
+		}
+	}
 }
 
 func loadFormat(root, path string) (*template.Template, int) {
@@ -127,6 +152,14 @@ func loadConfig(root, path string) (*DirConfig, int) {
 			log.Errorln("Failed to unmarshal config at", configPath+":", err)
 			return nil, http.StatusInternalServerError
 		}
+
+		err = cfg.Parse()
+		if err != nil {
+			log.Errorln("Failed to parse raw data in config at", configPath+":", err)
+			return nil, http.StatusInternalServerError
+		}
+
+		cachedConfigs[configPath] = cfg
 	}
 	return cfg, http.StatusOK
 }
