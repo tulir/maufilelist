@@ -160,7 +160,7 @@ func loadConfig(root, path string) (*DirConfig, int) {
 		}
 
 		cfg = &DirConfig{}
-		err = json.Unmarshal(data, &config)
+		err = json.Unmarshal(data, cfg)
 		if err != nil {
 			log.Errorln("Failed to unmarshal config at", configPath+":", err)
 			return nil, http.StatusInternalServerError
