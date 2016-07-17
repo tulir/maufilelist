@@ -64,6 +64,6 @@ func main() {
 	log.Debugln("Config loaded!")
 
 	http.HandleFunc("/", handle)
-	log.Infof("Listening on %s:%d\n", config.IP, config.Port)
+	log.Infof("Listening on %s:%d", config.IP, config.Port)
 	http.ListenAndServe(fmt.Sprintf("%s:%d", config.IP, config.Port), nil)
 }
