@@ -48,10 +48,10 @@ type FieldDataType int
 
 // Allowed FieldDataTypes
 const (
+	TypeLiteral    FieldDataType = iota
 	TypeName       FieldDataType = iota
 	TypeLastChange FieldDataType = iota
 	TypeArg        FieldDataType = iota
-	TypeLiteral    FieldDataType = iota
 )
 
 // FieldData contains the type and data of a list entry definition field
