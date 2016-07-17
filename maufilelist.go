@@ -27,7 +27,7 @@ import (
 // Config is the main configuration
 type Config struct {
 	IP             string          `json:"ip"`
-	Port           int8            `json:"port"`
+	Port           int             `json:"port"`
 	DefaultFormat  string          `json:"default-format"`
 	MainDomain     VDom            `json:"main-domain"`
 	VirtualDomains map[string]VDom `json:"virtual-domains"`
