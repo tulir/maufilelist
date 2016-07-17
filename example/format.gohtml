@@ -30,7 +30,7 @@
           </tr>
         </thead>
         <tbody>
-          {{ range $key, $val := .Files }}
+          {{ range $index, $val := .Files }}
             <tr>
               {{ range $index, $data := $val }}
                 <td>{{ $data }}</td>
