@@ -11,13 +11,12 @@
 	"directory-list": {
 		"enabled": true,
 		"parsing": [
-			".+-([0-9]\\.[0-9]\\.[0-9])",
-			".+"
+			".+-([0-9]\\.[0-9]\\.[0-9])"
 		],
 		"field-data": [
 			"file-name",
 			"last-change",
-			"$1,`N/A`",
+			"$1",
 			"`Directory`",
 			"`<a type='button' class='btn btn-download' href='` file-name `'>Enter</a>`"
 		]
@@ -26,14 +25,13 @@
 		"enabled": true,
 		"parsing": [
 			"(a-winshit-executable-([0-9]\\.[0-9]\\.[0-9]))\\.(exe)",
-			"(a-file-([0-9]\\.[0-9]\\.[0-9]))\\.([a-zA-Z0-9\\.]+)",
-			"(.+)"
+			"(a-file-([0-9]\\.[0-9]\\.[0-9]))\\.([a-zA-Z0-9\\.]+)"
 		],
 		"field-data": [
 			"$1",
 			"last-change:format(02.01.2006)",
-			"$2,`1`",
-			"$3,`Unknown`",
+			"$2",
+			"$3",
 			"`<a type='button' class='btn btn-download' href='` file-name `'>Download</a>`"
 		]
 	}
