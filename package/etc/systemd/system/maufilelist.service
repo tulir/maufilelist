@@ -1,0 +1,8 @@
+[Unit]
+Description=A configurable file listing system.
+
+[Service]
+ExecStart=/usr/bin/maufilelist
+
+[Install]
+WantedBy=multi-user.target

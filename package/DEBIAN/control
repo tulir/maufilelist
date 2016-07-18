@@ -1,0 +1,7 @@
+Package: maufilelist
+Version: 0.1.0-1
+Section: base
+Priority: optional
+Architecture: amd64
+Maintainer: Tulir293 <tulir293@maunium.net>
+Description: A configurable file listing system.
