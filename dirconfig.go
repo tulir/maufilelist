@@ -197,7 +197,7 @@ func parseLiteral(i int, def string) (FieldData, int, error) {
 		if def[literalEnd-1] == '\\' {
 			continue
 		}
-		return FieldData{Type: TypeLiteral, Data: def[i+1 : literalEnd+1]}, literalEnd + 1, nil
+		return FieldData{Type: TypeLiteral, Data: def[i+1 : literalEnd+1]}, literalEnd + 2, nil
 	}
 }
 
@@ -228,5 +228,5 @@ func parseParam(i int, def string) (FieldData, int, error) {
 	default:
 		return FieldData{}, argEnd + 1, fmt.Errorf("Unknown data key %s", param)
 	}
-	return fd, argEnd + 1, nil
+	return fd, argEnd, nil
 }
