@@ -106,7 +106,7 @@ func listFiles(w http.ResponseWriter, r *http.Request, cfg *DirConfig, format *t
 func listFilesByFieldInstructions(list FieldInstructions, dir bool, templCfg *TemplateData, files []os.FileInfo) {
 	if list.Enabled {
 		for i, file := range files {
-			if strings.HasPrefix(file.Name(), ".") || (file.IsDir() && dir) || (!file.IsDir() && !dir) {
+			if strings.HasPrefix(file.Name(), ".") || (!file.IsDir() && dir) || (file.IsDir() && !dir) {
 				continue
 			}
 
