@@ -63,15 +63,13 @@ type FieldData struct {
 // GetData gets the data for all the fields
 func (instructions FieldInstructions) GetData(file os.FileInfo) []string {
 	var args []string
-	var matched = false
 	for _, parser := range instructions.Parsing {
 		if !parser.MatchString(file.Name()) {
 			continue
 		}
-		matched = true
 		args = parser.FindStringSubmatch(file.Name())
 	}
-	if !matched {
+	if args == nil {
 		return nil
 	}
 
