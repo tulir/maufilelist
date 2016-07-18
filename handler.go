@@ -94,29 +94,29 @@ func listFiles(w http.ResponseWriter, r *http.Request, cfg *DirConfig, format *t
 		Files:      make([][]string, len(files)),
 	}
 
-	if cfg.DirectoryList.Enabled {
-		for i, file := range files {
-			if strings.HasPrefix(file.Name(), ".") || !file.IsDir() {
-				continue
-			}
-
-			templCfg.Files[i] = cfg.DirectoryList.GetData(file)
-		}
-	}
-
-	if cfg.FileList.Enabled {
-		for i, file := range files {
-			if strings.HasPrefix(file.Name(), ".") || file.IsDir() {
-				continue
-			}
-
-			templCfg.Files[i] = cfg.FileList.GetData(file)
-		}
-	}
+	listFilesByFieldInstructions(cfg.DirectoryList, true, &templCfg, files)
+	listFilesByFieldInstructions(cfg.FileList, false, &templCfg, files)
 
 	err := format.Execute(w, templCfg)
 	if err != nil {
 		panic(err)
+	}
+}
+
+func listFilesByFieldInstructions(list FieldInstructions, dir bool, templCfg *TemplateData, files []os.FileInfo) {
+	if list.Enabled {
+		for i, file := range files {
+			if strings.HasPrefix(file.Name(), ".") || (file.IsDir() && dir) || (!file.IsDir() && !dir) {
+				continue
+			}
+
+			fileData := list.GetData(file)
+			if fileData == nil {
+				i--
+			} else {
+				templCfg.Files[i] = fileData
+			}
+		}
 	}
 }
 
