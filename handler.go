@@ -66,7 +66,10 @@ func handle(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 		} else if os.IsPermission(err) {
 			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
 		}
+		return
 	}
 
 	format, errCode := loadFormat(root, path)
