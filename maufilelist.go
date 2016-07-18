@@ -22,6 +22,9 @@ import (
 	flag "maunium.net/go/mauflag"
 	log "maunium.net/go/maulogger"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 // Config is the main configuration
@@ -66,6 +69,16 @@ func main() {
 		panic(err)
 	}
 	log.Debugln("Config loaded!")
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		os.Stdout.Write([]byte("\n"))
+		log.Infoln("mauFileList shutting down...")
+		log.Shutdown()
+		os.Exit(0)
+	}()
 
 	http.HandleFunc("/", handle)
 	log.Infof("Listening on %s:%d", config.IP, config.Port)
