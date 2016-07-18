@@ -189,14 +189,17 @@ func parseArg(i int, def string) (FieldData, int, error) {
 }
 
 func parseLiteral(i int, def string) (FieldData, int, error) {
+	lookFrom := i
 	for {
-		literalEnd := strings.IndexRune(def[i+1:], '`')
+		literalEnd := strings.IndexRune(def[lookFrom+1:], '`')
 		if literalEnd == -1 {
 			return FieldData{}, len(def), fmt.Errorf("Unterminated literal after start at column %d", i)
 		}
 
-		literalEnd += len(def[:i]) + 1
+		literalEnd += len(def[:lookFrom]) + 1
 		if def[literalEnd-1] == '\\' {
+			def = def[:literalEnd-1] + def[literalEnd:]
+			lookFrom = literalEnd
 			continue
 		}
 		return FieldData{Type: TypeLiteral, Data: def[i+1 : literalEnd]}, literalEnd + 1, nil
