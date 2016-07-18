@@ -174,6 +174,8 @@ func parseArg(i int, def string) (FieldData, int, error) {
 	argEnd := strings.IndexAny(def[i+1:], "`$ ")
 	if argEnd == -1 {
 		argEnd = len(def[i:])
+	} else {
+		argEnd++
 	}
 
 	argEnd += len(def[:i])
