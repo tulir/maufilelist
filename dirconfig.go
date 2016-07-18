@@ -173,14 +173,14 @@ func (cfg *DirConfig) parseFieldData(definitions []string) ([][]FieldData, error
 func parseArg(i int, def string) (FieldData, int, error) {
 	argEnd := strings.IndexAny(def[i+1:], "`$ ")
 	if argEnd == -1 {
-		argEnd = len(def)
+		argEnd = len(def[i:])
 	}
 
 	argEnd += len(def[:i])
 
 	argN, err := strconv.Atoi(def[i+1 : argEnd])
 	if err != nil {
-		return FieldData{}, argEnd + 1, fmt.Errorf("Invalid argument # after column %d", i)
+		return FieldData{}, argEnd + 1, fmt.Errorf("Invalid argument number %s at column %d", def[i+1:argEnd], i+1)
 	}
 
 	return FieldData{Type: TypeArg, Data: argN}, argEnd + 1, nil
