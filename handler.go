@@ -186,12 +186,12 @@ func findFile(root, path, fileName string) string {
 	if _, err := os.Stat(path); err == nil {
 		return path
 	}
-	for len(dir) <= len(root) {
-		if strings.IndexRune(dir, '/') < 0 {
+	for len(dir) > len(root) {
+		if strings.IndexRune(dir[:len(dir)-1], '/') < 0 {
 			return ""
 		}
 		dir = dir[:strings.LastIndex(dir[:len(dir)-1], "/")]
-		var path = filepath.Join(path, fileName)
+		var path = filepath.Join(dir, fileName)
 		if _, err := os.Stat(path); err == nil {
 			return path
 		}
