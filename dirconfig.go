@@ -195,11 +195,11 @@ func parseLiteral(i int, def string) (FieldData, int, error) {
 			return FieldData{}, len(def), fmt.Errorf("Unterminated literal after start at column %d", i)
 		}
 
-		literalEnd += len(def[:i])
+		literalEnd += len(def[:i]) + 1
 		if def[literalEnd-1] == '\\' {
 			continue
 		}
-		return FieldData{Type: TypeLiteral, Data: def[i+1 : literalEnd+1]}, literalEnd + 2, nil
+		return FieldData{Type: TypeLiteral, Data: def[i+1 : literalEnd]}, literalEnd + 1, nil
 	}
 }
 
