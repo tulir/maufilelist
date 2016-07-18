@@ -4,6 +4,7 @@ build:
 package-prep: build
 	mkdir -p package/usr/bin
 	mkdir -p package/etc/mfl
+	mkdir -p package/var/log/mfl
 	cp maufilelist package/usr/bin/
 	cp example/config.json package/etc/mfl/
 	cp example/format.gohtml package/etc/mfl/example-format.gohtml
