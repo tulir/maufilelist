@@ -7,10 +7,12 @@ A program that generates configurable fancy file lists. Developed for [dl.mauniu
 I'm too lazy to write a proper explanation for the config, since the [example](https://github.com/tulir293/maufilelist/blob/master/example/config.json) is mostly self-explanatory
 
 ## Files
-mauFileList uses two files to generate a file list. The format file is called [`.mfl-format.gohtml`](https://github.com/tulir293/maufilelist/blob/master/example/format.gohtml) and directory config is [`.mfl.json`](https://github.com/tulir293/maufilelist/blob/master/example/mfl.json).
+mauFileList mainly uses two files to generate a file list. The format file is called [`.mfl-format.gohtml`](https://github.com/tulir293/maufilelist/blob/master/example/format.gohtml) and directory config is [`.mfl.json`](https://github.com/tulir293/maufilelist/blob/master/example/mfl.json).
 
 When an user requests something, mauFileList searches for both of these files starting from the directory requested and checking for the two files in every directory between the requested one and the root directory.
 The two files don't have to be in the same directory. It's quite common to have just one format file in the root and a config file for every directory.
+
+There's also (or rather, there will be) `.mfl-override.json` which can be used to override the names and change timestamps of files in a folder. This file is only searched for in the directory the user requests.
 
 ### Format file
 The format file uses the Go Template language mixed with HTML. There's an example in [example/format.gohtml](https://github.com/tulir293/maufilelist/blob/master/example/format.gohtml).
