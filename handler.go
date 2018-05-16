@@ -21,6 +21,7 @@ import (
 	log "maunium.net/go/maulogger"
 	"net/http"
 	"os"
+	"sort"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -71,6 +72,9 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	sort.Slice(files, func(i,j int) bool{
+	    return files[i].ModTime().After(files[j].ModTime())
+	})
 
 	format, errCode := loadFormat(root, path)
 	if errCode != http.StatusOK {
